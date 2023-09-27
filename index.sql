@@ -92,3 +92,55 @@ delimiter ;
 
 call sp_TitulosPorCategoria('Ciência');
 drop procedure sp_TitulosPorCategoria;
+
+
+
+-- Exercicio7
+delimiter //
+create procedure sp_AdicionarLivro(	
+	in p_Titulo varchar(255),
+    in p_Editora_ID INT,
+    in p_Ano_Publicacao int,
+    in p_Numero_Paginas int,
+    in p_Categoria_ID int
+)
+
+begin
+    declare v_Contagem int;
+
+    select count(*) into v_Contagem from Livro where Titulo = p_Titulo;
+
+    if v_Contagem > 0 then
+        signal sqlstate '45000'
+        set message_text = 'Livro com este título já existe na tabela.';
+    else
+        insert into Livro (Titulo, Editora_ID, Ano_Publicacao, Numero_Paginas, Categoria_ID)
+        values (p_Titulo, p_Editora_ID, p_Ano_Publicacao, p_Numero_Paginas, p_Categoria_ID);
+    end if;
+end;
+//
+delimiter ;
+
+call sp_AdicionarLivro('Os males do vilão', 2, 2023, 320, 4);
+
+-- Exercicio8
+delimiter //
+create procedure sp_AutorMaisAntigo()
+begin
+    declare AutorMaisAntigo varchar(255);
+    declare DataNascimento date;
+
+    set AutorMaisAntigo = '';
+    set DataNascimento = null;
+
+    select min(Data_Nascimento) into DataNascimento from Autor;
+
+    select Nome into AutorMaisAntigo from Autor where Data_Nascimento = DataNascimento;
+
+    select AutorMaisAntigo as 'Autor_Mais_Antigo';
+end; 
+//
+delimiter ;
+
+call sp_AutorMaisAntigo();
+drop procedure sp_AutorMaisAntigo;
