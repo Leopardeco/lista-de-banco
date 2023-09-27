@@ -144,3 +144,15 @@ delimiter ;
 
 call sp_AutorMaisAntigo();
 drop procedure sp_AutorMaisAntigo;
+
+-- Exercicio9
+delimiter //
+create procedure sp_ContarLivrosPorCategoria(in categoria_nome varchar(255), out total_livros int)
+begin
+    select COUNT(*) into total_livros
+    from Livro
+    inner join Categoria on Livro.Categoria_ID = Categoria.Categoria_ID
+    where Categoria.Nome = categoria_nome;
+end;
+//
+delimiter ;
